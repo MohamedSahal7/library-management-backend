@@ -1,0 +1,57 @@
+// Paste this file into https://dbdiagram.io (Import DBML).
+// Table names follow Django's default PostgreSQL naming convention.
+
+Table auth_user {
+  id bigint [pk, increment]
+  password varchar(128) [not null]
+  last_login timestamp
+  is_superuser boolean [not null, default: false]
+  username varchar(150) [not null, unique]
+  first_name varchar(150) [not null]
+  last_name varchar(150) [not null]
+  email varchar(254) [not null]
+  is_staff boolean [not null, default: false]
+  is_active boolean [not null, default: true]
+  date_joined timestamp [not null]
+}
+
+Table library_author {
+  id bigint [pk, increment]
+  name varchar(100) [not null, unique]
+  created_at timestamp [not null, note: 'Set automatically when the record is created']
+  updated_at timestamp [not null, note: 'Updated automatically when the record is saved']
+}
+
+Table library_category {
+  id bigint [pk, increment]
+  name varchar(100) [not null, unique]
+  created_at timestamp [not null, note: 'Set automatically when the record is created']
+  updated_at timestamp [not null, note: 'Updated automatically when the record is saved']
+}
+
+Table library_book {
+  id bigint [pk, increment]
+  title varchar(200) [not null]
+  isbn varchar(13) [not null, unique]
+  author_id bigint [not null]
+  category_id bigint [not null]
+  available boolean [not null, default: true]
+  created_at timestamp [not null, note: 'Set automatically when the record is created']
+  updated_at timestamp [not null, note: 'Updated automatically when the record is saved']
+}
+
+Table library_borrowrecord {
+  id bigint [pk, increment]
+  user_id bigint [not null]
+  book_id bigint [not null]
+  borrow_date timestamp [not null, note: 'Set automatically when borrowed']
+  return_date timestamp
+  returned boolean [not null, default: false]
+  created_at timestamp [not null, note: 'Set automatically when the record is created']
+  updated_at timestamp [not null, note: 'Updated automatically when the record is saved']
+}
+
+Ref: library_book.author_id > library_author.id [delete: cascade]
+Ref: library_book.category_id > library_category.id [delete: cascade]
+Ref: library_borrowrecord.user_id > auth_user.id [delete: cascade]
+Ref: library_borrowrecord.book_id > library_book.id [delete: cascade]
